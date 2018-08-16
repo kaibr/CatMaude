@@ -1,0 +1,38 @@
+
+	
+	
+fmod TERMINAL is
+
+  including CATEGORY .
+  including PRODUCT-ASSOC .
+
+  op 1  : -> Object .
+  op !  : Object -> Arrow .
+
+  var A B : Object .
+  var F   : Arrow .
+  
+  eq  dom(!(A)) = A .
+  eq  cod(!(A)) = 1 .
+  
+
+  eq   proj1(1,A)  =  !(1 x A) .
+  eq   proj2(A,1)  =  !(A x 1) .
+  eq   !(1)  =  id(1) .
+  ceq  F ; !(A)  =  !(dom(F))  if  cod(F) == A .
+  
+  ceq  < !(B), F ; proj2(1,A) >  =  F  if  cod(F) == 1 x A  and
+					   dom(F) == B .
+  ceq  < F ; proj1(A,1), !(B) >  =  F  if  cod(F) == A x 1  and
+					   dom(F) == B .
+
+  eq   < !(1 x A), proj2(1,A) >  =  id(1 x A) .
+
+  eq   < proj1(A,1), !(A x 1) >  =  id(A x 1) .
+  
+  ceq  < id(1), F ; proj2(1,A) >  =  F  if  cod(F) == 1 x A  and
+					    dom(F) == 1 .
+  ceq  < F ; proj1(A,1), id(1) >  =  F  if  cod(F) == A x 1  and
+					    dom(F) == 1 .
+
+endfm

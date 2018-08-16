@@ -1,0 +1,36 @@
+
+***--- explicit associativity isomorphisms
+***
+***  op  assocRight : -> Arrow .
+***  eq  assocRight  =  < proj1(setA x seq, seq) ;
+***		       proj1(setA, seq) 
+***		       ,
+***		       proj2(setA, seq) x
+***		       id(seq)
+***		     > .
+***		     
+***  eq  concstruct  =  < id(seq x seq) , 
+***		       proj1(seq, seq) ; next 
+***		     > ;
+***		     dist(seq x seq, 1, setA x seq) ;
+***		     [
+***		       proj1(seq x seq, 1) ;
+***		       ( id(seq) x next ) ;
+***		       dist(seq, 1, setA x seq);
+***		       [
+***			 proj2(seq, 1) ;
+***			 inc1(1, setA x (seq x seq))
+***			 ,
+***			 < proj2(seq, (setA x seq)) , 
+***			   proj1(seq, (setA x seq)) > ;
+***			 assocRight ;
+***			 inc2(1, setA x (seq x seq))
+***		       ]
+***	  	       ,
+***		       ( proj2(seq, seq) x id(setA x seq) ) ;
+***		       < proj2(seq, setA x seq) , 
+***			 proj1(seq, setA x seq) > ;
+***		       assocRight ;
+***		       inc2(1, setA x (seq x seq))
+***		     ] .
+

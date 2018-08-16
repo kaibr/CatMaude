@@ -1,0 +1,28 @@
+
+
+	
+in category.maude
+in product-assoc.maude
+in parameter.maude
+
+in streams.maude
+  
+ 
+
+--- to prove: merge(odd(x),even(x)) = x
+--- < odd , even > ; merge  and id(streams) are homomorphisms
+--- from the final coalgebra into itself
+--- and thus equal
+ 
+reduce < odd,even > ; merge ; < head,tail > == < head,tail > ; strfunc(< odd,even > ; merge) .
+--- It works.
+
+reduce id(streams) ; < head,tail > == < head,tail > ; strfunc(id(streams)) .
+--- It works.
+
+
+--- even = tail ; odd
+--- proven by coinduction, the coalgebra structure is clear, since even is defined
+--- coinductively. It is the definition of even (< tail ; head , tail ; tail >)
+
+reduce tail ; odd ; < head,tail > == < tail ; head , tail ; tail > ; strfunc(tail ; odd) .

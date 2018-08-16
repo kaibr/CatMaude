@@ -1,0 +1,60 @@
+
+fmod SUM is
+
+  including CATEGORY .
+
+  op _+_	     : Object Object -> Object .
+  op _+_	     : Arrow Arrow -> Arrow .
+  ops inc1 inc2	     : Object Object -> Arrow .
+  op [_,_]	     : Arrow Arrow -> Arrow? .
+
+  vars F G H	     : Arrow .     
+  vars A B	     : Object .
+  
+
+
+
+  eq  cod( inc1(A,B) ) = A + B .
+  eq  cod( inc2(A,B) ) = A + B . 
+  eq  dom( inc1(A,B) ) = A .
+  eq  dom( inc2(A,B) ) = B .
+
+  eq  dom( [ F,G ] ) = dom(F) + dom(G) .
+  eq  cod( [ F,G ] ) = cod(F) .
+
+
+--- express sum as copairing
+
+  eq  F + G = [ F ; inc1( cod(F), cod(G) ), 
+		G ; inc2( cod(F), cod(G) ) ] .
+
+
+--- copairing is defined for arrows w/ the same codomain only
+
+  cmb	[ F,G ] : Arrow		   if	cod(F) == cod(G) .
+
+--- existence of copairing 
+
+  ceq 	inc1(A,B) ; [ F,G ] = F  if  cod(F) == cod(G) and
+				     dom(F) == A and
+				     dom(G) == B .
+				       
+  ceq 	inc2(A,B) ; [ F,G ] = G  if  cod(F) == cod(G) and
+				     dom(F) == A and
+				     dom(G) == B .
+				       
+--- uniqueness of copairing 
+
+  ceq   [ inc1(A,B) ; F, inc2(A,B) ; F ] = F  if  dom(F) == A + B .
+
+
+--- and this has to be added to make it confluent
+
+  ceq  [ F,G ] ; H  =  [ F ; H, G ; H ]  if  cod(F) == cod(G) and
+					     cod(F) == dom(H) .
+						  
+
+  eq  [ inc1(A,B), inc2(A,B) ]  =  id(A + B) .
+
+
+endfm

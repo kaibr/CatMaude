@@ -1,0 +1,24 @@
+
+--- Some endofunctor named "funcT".
+--- From the operational point of view, those
+--- equations are not needed, since funcT will
+--- always be defined with functorial operations.
+
+
+
+
+fmod ENDOFUNCTOR is
+
+  including CATEGORY . 
+
+  op  funcT : Arrow -> Arrow .
+  op  funcT : Object -> Object .
+  
+  vars F G : Arrow .
+  vars A   : Object .
+
+  eq  funcT(id(A)) = id(funcT(A)) .
+
+  ceq  funcT( F ; G ) = funcT(F) ; funcT(G)  if  cod(F) == dom(G) .
+      
+endfm

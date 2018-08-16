@@ -1,0 +1,37 @@
+
+--- The union of the Term Rewriting Systems SUM and PRODUCT is
+--- *not* confluent. This module orients *some* of the critical pairs.
+	
+	
+	
+fmod SUMPRODUCT is
+
+  including CATEGORY .
+  including PRODUCT .
+  including SUM .
+
+
+  vars A A1 A2 A3 A4 : Arrow .
+  vars O O1 O2	     : Object .
+  var P		     : Product .
+  var S		     : Sum .
+    
+  
+  ceq  [ < inc1(S) ; A1 , inc1(S) ; A2 > , 
+	 < inc2(S) ; A1 , inc2(S) ; A2 > ]  =  < A1 , A2 > 
+       if dom(A1) == S and dom(A2) == S .
+	
+ 
+  ceq  < [ A1 ; proj1(P) , A2 ; proj1(P) ] , 
+	 [ A1 ; proj2(P) , A2 ; proj2(P) ] >  =  [ A1 , A2 ]  
+       if cod(A1) == P and cod(A2) == P .
+
+  ceq  [ < A1 ; A3 , A1 ; A4 > , 
+         < A2 ; A3 , A2 ; A4 > ]  =  
+       < [ A1 ; A3 , A2 ; A3 ] ,
+	 [ A1 ; A4 , A2 ; A4 ] > 
+       if cod(A1) == dom(A3) and cod(A1) == dom(A4) and
+	  cod(A2) == dom(A3) and cod(A2) == dom(A4) .
+				      	
+endfm
+

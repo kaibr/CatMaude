@@ -1,0 +1,59 @@
+	
+in category.maude
+in product-assoc.maude
+in sum.maude
+in terminal.maude
+in distributive.maude
+
+
+	
+	
+fmod BOOLEAN is
+
+  including CATEGORY .
+  including SUM .
+  including PRODUCT-ASSOC .
+  including TERMINAL .
+  including DISTRIBUTIVE .
+  
+
+  op bool	     : -> Object .
+  ops f t            : -> Arrow .
+  ops not and	     : -> Arrow .
+
+
+  eq  bool  =  1 + 1 .
+  eq  f     =  inc1(1,1) .
+  eq  t     =  inc2(1,1) .
+  
+  eq  not   =  [inc2(1,1), inc1(1,1)] .
+  
+  eq  and  =  dist(bool,1,1) ;
+	      ( proj1(bool,1) + proj1(bool,1) ) ;
+	      [ [ f,f ],
+	        id(bool)
+	      ] .
+
+
+endfm
+
+
+
+
+red ((inc1(1,1) x inc2(1,1)) ; < proj2(bool,bool), proj1(bool,bool) > ; and )
+    ==
+    ((inc1(1,1) x inc2(1,1)) ; and ) .
+    
+red ((inc2(1,1) x inc1(1,1)) ; < proj2(bool,bool), proj1(bool,bool) > ; and )
+    ==
+    ((inc2(1,1) x inc1(1,1)) ; and ) .
+
+red ((inc1(1,1) x inc1(1,1)) ; < proj2(bool,bool), proj1(bool,bool) > ; and )
+    ==
+    ((inc1(1,1) x inc1(1,1)) ; and ) .        
+
+red ((inc2(1,1) x inc2(1,1)) ; < proj2(bool,bool), proj1(bool,bool) > ; and )
+    ==
+    ((inc2(1,1) x inc2(1,1)) ; and ) .
+    
+--- thus : < proj2(bool,bool), proj1(bool,bool) > ; and == and .

@@ -1,0 +1,98 @@
+
+fmod ARROW-LIST is
+
+  including CATEGORY .
+  including MACHINE-INT .
+
+  sort Arrows ArrowList .
+
+  subsort Arrow < ArrowList .
+
+  op _,_ : ArrowList ArrowList -> ArrowList [assoc id: nilAL ] .
+
+
+  op nilAL : -> ArrowList .  
+
+  var AL : ArrowList .
+  var A A1 A2 : Arrow .
+  var NzI : NzMachineInt .
+  
+
+
+
+  op  extractArrow : MachineInt ArrowList -> Arrow .
+
+  eq  extractArrow(NzI, (A , AL) )  =  extractArrow(NzI - 1, AL) .
+  eq  extractArrow(0, (A , AL) )  =  A .
+  
+  
+  op  extractFirstArrows : MachineInt ArrowList -> ArrowList .
+
+  eq  extractFirstArrows(NzI, (A , AL) )  =  ( A , extractFirstArrows(NzI - 1, AL)) .
+  eq  extractFirstArrows(0, (A , AL) )  =  A .
+
+  
+  op  equalDomains : ArrowList -> Bool .
+  
+  eq  equalDomains( (A1 , A2 , AL) )  =  dom(A1) == dom(A2) and
+					equalDomains( (A2 , AL) ) .
+  eq  equalDomains( A ) = true .
+  					 	
+							      
+  op  equalCodomains : ArrowList -> Bool .
+  
+  eq  equalCodomains( (A1 , A2 , AL) )  =  cod(A1) == cod(A2) and
+					equalCodomains( (A2 , AL) ) .
+  eq  equalCodomains( A ) = true .
+  
+  
+  op  affixArrow : Arrow ArrowList -> ArrowList .
+  
+  eq  affixArrow( A , (A1 , AL) )  =  (A ; A1) , affixArrow( A , AL ) .
+  eq  affixArrow( A , nilAL )  =  nilAL .
+  
+  
+  op  suffixArrow : Arrow ArrowList -> ArrowList .
+  
+  eq  suffixArrow( A , (A1 , AL) )  =  (A1 ; A) , suffixArrow( A , AL ) .
+  eq  suffixArrow( A , nilAL )  =  nilAL .		      		      
+  
+  
+  op <_> : ArrowList -> Arrow? .
+  op [_] : ArrowList -> Arrow? .
+
+  op product : ArrowList -> Arrow .
+  op sum : ArrowList -> Arrow .  
+  
+  vars X Y Z U : ArrowList .
+
+  eq < X, < Y , Z > , U > = < X , Y , Z , U > .		
+  eq < A > = A .
+	
+  eq [ X, [ Y , Z ] , U ] = [ X , Y , Z , U ] .		
+  eq [ A ] = A .	
+
+  eq product( X, product( Y , Z ) , U ) = product( X , Y , Z , U ) .		
+  eq product( A ) = A . 
+
+  eq sum( X, sum( Y , Z ) , U ) = sum( X , Y , Z , U ) .		
+  eq sum( A ) = A . 
+
+
+
+    
+
+endfm
+	
+--- could be much more elegant if we had renaming...	
+
+
+
+--- The idea of the "id: nilAL" is not primarily that nilAL is removed,
+--- but to make the third equation suffice, while w/o
+--- identity we would need all three
+---  eq < X, < Y , Z > > = < X , Y , Z > .
+---  eq < < Y , Z > , X > = < Y , Z , X > .
+---  eq < X, < Y , Z > , U > = < X , Y , Z , U > .	
+--- A similar argument applies to the equations for extractArrow.
+--- nilAL ist not intended for use. Express !1 and !0 differently.

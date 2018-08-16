@@ -1,0 +1,64 @@
+
+fmod DISTRIBUTIVE is
+
+including CATEGORY .
+including INVERSE .
+including PRODUCT .
+including SUM .
+
+
+ops  distribute collect	: Object Object Object -> Arrow .
+
+vars  O1 O2 O3	: Object .
+vars  A1 A2	: Arrow .
+
+
+eq  collect(O1,O2,O3)  =  [ id(O1) x inc1(O2 + O3) , 
+			    id(O1) x inc2(O2 + O3) ] .
+
+eq  distribute(O1,O2,O3)  =  inverse(collect(O1,O2,O3)) .
+
+
+
+*** a case analysis macro
+
+op  switch : Arrow Arrow -> Arrow? .
+
+cmb switch(A1,A2) : Arrow  if  cod(A1) == cod(A2) and
+			       first(dom(A1)) == first(dom(A2)) .
+
+eq  dom(switch(A1,A2))  =  first(dom(A1)) x (second(dom(A1)) + second(dom(A2))) .
+eq  cod(switch(A1,A2))  =  cod(A1) .
+
+eq  switch(A1,A2)  =  distribute( first(dom(A1)),
+				  second(dom(A1)),
+				  second(dom(A2))) ;
+		      [ A1 , A2 ] .
+
+
+*** helper functions for case analysis
+
+op first : Product -> Object .
+eq first(O1 x O2)  =  O1 .
+op second : Product -> Object .
+eq second(O1 x O2)  =  O2 .
+
+*** for testing 
+
+ops a b c d : -> Object .
+ops f g h : -> Arrow .
+
+eq dom(f) = a x b .
+eq cod(f) = d .
+eq dom(g) = a x c .
+eq cod(g) = d .
+eq dom(h) = c .
+eq cod(h) = c .
+
+
+endfm
+
+
+
+
+

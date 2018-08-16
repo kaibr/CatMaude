@@ -1,0 +1,10 @@
+
+fmod PARAMETER is
+
+  including CATEGORY .
+  
+  op setA : -> Object .
+  
+endfm
+
+

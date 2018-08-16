@@ -1,0 +1,109 @@
+	
+--- This is T(X) = 1 + X .	
+	
+	
+fmod NATURALS-FUNCTOR is
+
+  including ENDOFUNCTOR .
+  including SUM .
+  including TERMINAL .
+  
+  var A : Object .
+  var F : Arrow .
+  
+  eq	funcT( F ) = id(1) + F  .
+  eq	funcT( A ) = 1 + A .
+    
+endfm
+	
+
+--- The *completed* naturals, i.e. N u {infinity}.
+	
+	
+fmod NATURALS is
+
+  including DISTRIBUTIVE .
+  including NATURALS-FUNCTOR .
+
+
+  op  next : -> Arrow .
+  op  nat  : -> Object .
+
+  eq  dom(next) = nat .
+  eq  cod(next) = funcT(nat) .  
+
+    
+  --- successor
+  
+  ops nextinv succ : -> Arrow .
+  
+  eq  dom(nextinv) = funcT(nat) .
+  eq  cod(nextinv) = nat .
+
+
+  eq  nextinv ; next  =  funcT(next) ; funcT(nextinv) .
+			 
+  eq  succ  =  inc2(1,nat) ; nextinv .
+
+  
+  --- predecessor
+  
+  ops pred predstruct : -> Arrow .
+  
+  eq  dom(pred) = nat .
+  eq  cod(pred) = nat .
+  
+  eq  predstruct  =  next ; [ inc1(1,nat),
+			      next ; ( id(1) + succ )
+			    ] .
+  
+  eq  pred ; next  =  predstruct ; funcT(pred) .
+
+    
+  --- addition
+    
+  ops  addstruct add : -> Arrow .
+
+
+  eq  dom(addstruct)  =  nat x nat .
+  eq  cod(addstruct)  =  1 + (nat x nat) .
+  
+  eq  dom(add)  =  nat x nat .
+  eq  cod(add)  =  nat .
+  
+  eq  add ; next = addstruct ; funcT(add) .
+  
+  eq  addstruct  =
+      < id(nat x nat), proj1(nat, nat) ; next > ;
+      dist(nat x nat, 1, nat) ;
+      [
+        proj1(nat x nat, 1) ;
+	( id(nat) x next ) ;
+	dist(nat,1,nat) ;
+	[
+	  proj2(nat,1) ;
+	  inc1(1, nat x nat),
+	  
+	  inc2(1, nat x nat)
+	],
+	
+	proj2(nat, nat x nat) ;   --- using strict assoc
+	inc2(1, nat x nat) 
+      ] .
+
+      
+  --- zero	   	
+	   
+  ops  zero zerostruct : -> Arrow .
+  
+
+  eq  zerostruct  =  inc1(1,1) .
+  
+  eq  dom(zero)  =  1 .
+  eq  cod(zero)  = nat .
+
+  eq  zero ; next  =  zerostruct ; funcT(zero) .      	
+  
+  
+endfm
+

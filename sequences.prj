@@ -1,0 +1,45 @@
+
+	
+in category.maude
+in product-assoc.maude
+in sum.maude
+in terminal.maude
+in distributive.maude
+in parameter.maude
+
+in sequences.maude
+
+
+
+ 
+--- to prove:  stail(cons(a,x)) = x
+--- cons ; stail and proj2(setA x seq) are homomorphisms
+--- from the same coalgebra into the final one
+
+
+
+reduce  proj2(setA, seq) ; next ==  proj2struct ; seqfunc(proj2(setA, seq)) .
+--- (That works, since I designed proj2struct to make it work.)
+
+
+
+
+reduce  cons ; stail ; next  ==  proj2struct ; seqfunc(cons ; stail) .
+--- works, if you enrich the theory by  "next ; nextinv = id(seq)"
+
+
+--- and you may do that since:
+reduce  next ; nextinv ; next == next ; seqfunc(next ; nextinv) .
+
+
+
+--- conc(nil,nil) = nil since both of them are the unique hom 
+--- from nilstruct onto next
+
+reduce  < nil , nil > ; conc ; next == nilstruct ; seqfunc(< nil , nil > ; conc) .
+
+---reduce  < nil , nil > ; conc ; next .
+---reduce  nilstruct ; seqfunc(< nil , nil > ; conc) .
+
+
+

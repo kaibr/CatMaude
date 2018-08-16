@@ -1,0 +1,178 @@
+
+	
+	
+fmod SUM is
+
+including MACHINE-INT .
+including ARROW-LIST .
+including CATEGORY .
+
+sorts	  Sum .
+subsorts  Sum < Object .
+
+op _+_ 		: Object Object -> Sum [assoc] .
+op inc		: MachineInt Sum -> Arrow? .
+
+var NzI		   : NzMachineInt .
+var I J		   : MachineInt .
+vars A A1 A2 A3 A4 : Arrow .
+vars AL	AL1 AL2    : ArrowList .
+vars O O1 O2	: Object .
+var S		: Sum .
+
+
+
+
+
+eq  dom( inc( I , S ) ) = extractObjS(I,S) .
+eq  cod( inc( I , S ) ) = S . 
+
+
+eq  dom( [ A ] )  =  dom(A) .
+eq  dom( [ A , AL ] ) = dom(A) + dom([ AL ]) .
+eq  cod( [ A , AL ] ) = cod(A) .
+
+
+--- express sum as copairing
+
+eq  sum(AL)  =  [ constructCoPairing(AL, 0, codS(AL)) ] .
+
+
+
+
+
+cmb  [ AL ] : Arrow  if  equalCodomains(AL) .
+
+cmb  inc( I, S ) : Arrow  if  I >= 0  and  lengthS(S) > I .  
+
+
+
+--- existence of copairing 
+
+
+ceq 	inc(I,S) ; [ AL ]  
+	=  
+	projectS( I, AL, extractArrow( whichComponentS(AL,I,S), AL ), whichComponentS(AL,I,S))
+	if  equalCodomains(AL)  and 
+	    dom([ AL ]) == S  and
+	    inc(I,S) : Arrow .
+		       
+				       
+				       
+--- uniqueness of copairing 
+
+ceq   [ AL1 , (inc(0,S) ; A) , (inc(1,S) ; A) , AL2 ]
+      =
+      [ AL1 , A , AL2 ]
+      if  
+      dom(A) == S  and lengthS(S) == 2 .
+
+ceq   [ AL1 , (inc(0,S) ; A) , (inc(1,S) ; A) , (inc(2,S) ; A) , AL2 ]
+      =
+      [ AL1 , A , AL2 ]
+      if  
+      dom(A) == S  and lengthS(S) == 3 .
+      
+ceq   [ AL1 , (inc(0,S) ; A) , (inc(1,S) ; A) , (inc(2,S) ; A) , (inc(3,S) ; A) , AL2 ]
+      =
+      [ AL1 , A , AL2 ]
+      if  
+      dom(A) == S  and lengthS(S) == 4 .     
+      
+
+
+      
+
+ceq  [ AL ] ; A  =  [ suffixArrow( A , AL ) ]  if  equalCodomains(AL)  and
+						   cod( [ AL ] ) == dom(A) .
+						   
+						  
+
+ceq  [ AL1 , inc(0,S) , inc(1,S) , AL2 ]  =  id(S)  if  lengthS(S) == 2 .
+ceq  [ AL1 , inc(0,S) , inc(1,S) , inc(2,S) , AL2 ]  =  id(S)  
+						   if  lengthS(S) == 3 .
+ceq  [ AL1 , inc(0,S) , inc(1,S) , inc(2,S) , inc(3,S) , AL2 ]  =  id(S)  
+
+						   if  lengthS(S) == 4 .
+						   
+
+--- auxiliary functions      
+
+
+op  codS : ArrowList -> Sum .
+
+eq  codS( A )  =  cod(A) .
+eq  codS( A , AL ) = cod(A) + codS(AL) .
+
+
+
+op  constructCoPairing : ArrowList MachineInt Sum -> ArrowList .
+
+eq  constructCoPairing( A , I , S)  =  A ; [ constructInc(I, cod(A), S) ] .
+
+eq  constructCoPairing( (A , AL) , I , S) =  ( A ; [ constructInc(I, cod(A), S) ] ) , 
+					     constructCoPairing( AL , I + 1 , S ) .
+
+op  constructInc : MachineInt Object Sum -> ArrowList .
+
+eq  constructInc(I, (O + O1), S)  =  ( inc(I,S) , constructInc(I + 1, O1, S) ) .
+ceq constructInc(I, O, S)  =  inc(I,S)  if  not O : Sum .					     
+					     		       
+
+op  extractObjS : MachineInt Object -> Object .
+
+
+ceq  extractObjS(NzI, O1 + O2)  =  extractObjS(NzI - 1, O2)  if  not O1 : Sum .
+
+ceq  extractObjS(0, O1)	=  O1			   if  not O1 : Sum .
+ceq  extractObjS(0, O1 + O2)  =  O1		   if  not O1 : Sum .
+
+
+
+op  lengthS : Object -> MachineInt .
+
+eq  lengthS(O1 + O2)  =  lengthS(O1) + lengthS(O2) .
+
+ceq lengthS(O)	      =  1  if  not O : Sum .
+
+
+
+
+---   I: inclusion  AL: Arrowlist in copairing  A: the corresponding component
+---   of the copairing   J: index of A in AL
+op  projectS : MachineInt ArrowList Arrow MachineInt -> Arrow .
+
+eq  projectS( I, AL, A, J )  =  
+    if dom(A) : Sum
+    then
+       if J == 0 
+       then
+		inc(I,dom(A))
+       else
+		inc(I - lengthS(dom([ extractFirstArrows( J - 1, AL) ])), dom(A))
+       fi ; A
+    else
+       A
+    fi .
+
+
+
+
+
+op  whichComponentS : ArrowList MachineInt Object -> MachineInt .
+
+ceq  whichComponentS( (A , AL), I, O1 + O2)  
+     =  
+     1 + whichComponentS(AL, I - lengthS(O1), O2)
+     if
+     dom(A) == O1  and  lengthS(O1) <= I  and I < lengthS(O1 + O2) .
+
+ceq  whichComponentS( (A , AL), I, O1 + O2)  =  0  
+     if
+     dom(A) == O1  and  lengthS(O1) > I  and  I < lengthS(O1 + O2) .
+         
+ceq  whichComponentS( A , I, O)  =  0  
+     if
+     dom(A) == O .
+
+endfm

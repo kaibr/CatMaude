@@ -1,0 +1,126 @@
+
+  	
+--- This is T(X) = 1 + A x X .	
+	
+	
+fmod SEQUENCE-FUNCTOR is
+
+  including PRODUCT-ASSOC . 
+  including SUM .
+  including TERMINAL .
+  including PARAMETER .
+  
+  var S : Object .
+  var F : Arrow .
+
+  op  seqfunc : Object -> Object .
+  op  seqfunc : Arrow -> Arrow .
+    
+  eq	seqfunc( F ) = id(1) + ( id(setA) x F ) .
+  eq	seqfunc( S ) = 1 + ( setA x S ) .
+    
+endfm
+	
+
+--- The set of sequences i.e. (infinite) streams and (finite) lists	
+	
+	
+fmod SEQUENCES is
+
+  including SEQUENCE-FUNCTOR .
+  including DISTRIBUTIVE .
+
+
+  op  next : -> Arrow .
+  op  seq : -> Object .
+
+  ops nextinv stail cons : -> Arrow .
+  ops proj2struct stailstruct : -> Arrow .  
+  
+  eq  dom(next)  =  seq .
+  eq  cod(next)  =  seqfunc(seq) .
+
+  eq  dom(nextinv)  =  seqfunc(seq) .
+  eq  cod(nextinv)  =  seq .
+  eq  dom(stail)  =  seq .
+  eq  cod(stail)  =  seq .
+  eq  dom(cons)  =  setA x seq .
+  eq  cod(cons)  =  seq .
+
+
+  eq  nextinv ; next  =  seqfunc(next) ; seqfunc(nextinv) .
+    
+  eq  cons  =  inc2(1, setA x seq) ; nextinv .
+  
+  eq  stail ; next = stailstruct ; seqfunc(stail) .
+  
+  eq  stailstruct  =  next ; [ 
+			      inc1(1, setA x seq) ,
+
+			      proj2(setA, seq) ; next ; 
+			      (id(1) + < proj1(setA, seq) , cons >)
+			    ] .
+			
+
+--- this is the structure of the coalgebra who's unique hom
+--- is proj2(setA x seq)
+
+
+  eq proj2struct  =  proj2(setA, seq) ; next ; 
+		      [ inc1(1, setA x setA x seq) ,
+		        < proj1(setA, seq) , id(setA x seq) > ;
+			inc2(1, setA x (setA x seq)) ] .
+    
+
+--- Let's enrich the theory by equations that follow from uniqueness:
+
+  eq  next ; nextinv  =  id(seq) .
+    
+--- end of enrichment
+    
+
+        
+    
+  ops nil nilstruct : -> Arrow .
+  
+  eq  dom(nil)  =  1 .
+  eq  cod(nil)  =  seq .
+  
+  eq  nilstruct  =  inc1(1, setA x 1) .
+  
+  eq  nil ; next  =  nilstruct ; seqfunc(nil) .
+
+      
+  ops conc concstruct : -> Arrow .
+
+  eq  dom(conc)  =  seq x seq .
+  eq  cod(conc)  =  seq .
+  
+  eq  concstruct  =  < id(seq x seq) , 
+		       proj1(seq, seq) ; next 
+		     > ;
+		     dist(seq x seq, 1, setA x seq) ;
+		     [
+		       proj1(seq x seq, 1) ;
+		       ( id(seq) x next ) ;
+		       dist(seq, 1, setA x seq);
+		       [
+			 proj2(seq, 1) ;
+			 inc1(1, setA x (seq x seq))
+			 ,
+			 < proj2(seq, (setA x seq)) , 
+			   proj1(seq, (setA x seq)) > ;
+			 inc2(1, setA x seq x seq)
+		       ]
+	  	       ,
+		       ( proj2(seq, seq) x id(setA x seq) ) ;
+		       < proj2(seq, setA x seq) , 
+			 proj1(seq, setA x seq) > ;
+		       inc2(1, setA x seq x seq)
+		     ] .
+			   
+  eq  conc ; next  =  concstruct ; seqfunc(conc) .
+   
+
+endfm
+

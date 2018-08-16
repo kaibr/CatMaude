@@ -1,0 +1,54 @@
+
+fmod INVERSE is
+	
+including CATEGORY .
+
+op  inverse	: Arrow -> Arrow .
+
+vars  A A1 A2 	: Arrow .
+vars  O		: Object .
+
+
+
+eq  cod(inverse(A)) = dom(A) . 
+eq  dom(inverse(A)) = cod(A) .
+
+
+*** existence of an inverse arrow
+
+eq  inverse(A) ; A = id(cod(A)) .
+eq  A ; inverse(A) = id(dom(A)) .
+ 
+
+*** and this has to be added to make it confluent
+
+eq  inverse(id(O)) = id(O) .
+eq  inverse(inverse(A)) = A .
+eq  inverse( A1 ; A2 ) = inverse(A2) ; inverse(A1) .
+
+endfm
+
+
+
+
+
+
+
+*** By the way...
+*** reduce in INVERTIBLE : (a ; id(o) ; a) : Invertible .
+*** causes: Process Maude segmentation fault
+*** (It loops on the first membership, seems
+*** hard to write complex cmb's that terminate)
+***
+***cmb  A1 ; A2 : Invertible  if  A1 ; A2 : Arrow  and 
+***			       A1 : Invertible  and  
+***			       A2 : Invertible .
+
+
+*** 12/02/99 Steven Eker: does not know if Algorithm 
+*** for multiple sort constraints on associative operator
+*** is complete.
+*** Thus: No sort Invertible, if inverse is applied to A
+*** A is considered invertible.
+
+

@@ -1,0 +1,43 @@
+
+in category.maude
+
+in product-assoc.maude
+in sum.maude
+in distributive.maude
+in terminal.maude
+in parameter.maude
+
+in sequences.maude
+in streams.maude
+
+in incstr.maude
+
+
+--- conc(incstr(x),y) = incstr(x) 
+--- (appending sth. to an infinite list is futile...)
+--- to prove: incstr x id(seq) ; conc == proj1(streams,seq) ; incstr
+
+
+--- first prove that <h,t> x id ; inc2 is the coalg. structure
+--- that defines proj1 ; incstr 
+
+reduce  proj1(streams,seq) ; incstr ; next ==
+	( < head,tail > x id(seq) ) ; 
+	inc2(1,setA x streams x seq) ;
+	seqfunc(proj1(streams,seq) ; incstr) .
+	
+--- now prove that the same structure defines incstr x id ; conc 
+
+reduce ( incstr x id(seq) ) ; conc ; next ==
+       ( < head,tail > x id(seq) ) ; 
+       inc2(1,setA x streams x seq) ;
+       seqfunc( (incstr x id(seq)) ; conc ) .
+	
+	
+
+
+
+
+   
+  
+  

@@ -1,0 +1,19 @@
+
+
+fmod INCSTR is
+  
+  including SEQUENCES .
+  including STREAMS .
+  
+  op incstr : -> Arrow . --- inclusion of streams into sequences
+  
+  eq  dom(incstr)  =  streams .
+  eq  cod(incstr)  =  seq .
+  
+  eq  incstr ; next  = < head, tail > ; inc2(1,setA x streams) ;
+		  seqfunc(incstr) .
+endfm
+
+   
+
+  

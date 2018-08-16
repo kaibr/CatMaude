@@ -1,0 +1,62 @@
+
+fmod PRODUCT is
+
+including CATEGORY .
+
+sorts	  Product .
+subsorts  Product < Object .
+
+op _x_ 		: Object Object -> Product .
+op _x_		: Arrow Arrow -> Arrow .
+ops proj1 proj2	: Product -> Arrow .
+op <_`,_>	: Arrow Arrow -> Arrow? .
+
+vars A A1 A2 	: Arrow .
+vars O O1 O2	: Object .
+var P		: Product .
+
+
+
+eq  dom( proj1( P ) ) = P .
+eq  dom( proj2( P ) ) = P . 
+eq  cod( proj1( O1 x O2 ) ) = O1 .
+eq  cod( proj2( O1 x O2 ) ) = O2 .
+
+eq  dom( < A1, A2 > ) = dom(A1) .
+eq  cod( < A1, A2 > ) = cod(A1) x cod(A2) .
+
+
+*** express product as pairing
+
+eq  A1 x A2 = < proj1(dom(A1) x dom(A2)) ; A1 , 
+		proj2(dom(A1) x dom(A2)) ; A2 > .
+
+
+*** pairing is defined for arrows w/ the same domain only
+
+cmb	< A1, A2 > : Arrow	if	dom(A1) == dom(A2) .
+
+*** existence of pairing 
+
+ceq 	< A1, A2 > ; proj1(P) = A1  if  dom(A1) == dom(A2) and 
+					cod(A1) x cod(A2) == P .
+
+ceq 	< A1, A2 > ; proj2(P) = A2  if  dom(A1) == dom(A2) and 
+					cod(A1) x cod(A2) == P .
+
+*** uniqueness of pairing 
+
+ceq   < A ; proj1(P), A ; proj2(P) > = A  if  cod(A) == P .
+
+
+*** and this has to be added to make it confluent
+
+ceq	A ; < A1 , A2 >  =  < A ; A1 , A ; A2 >  if  dom(A1) == dom(A2) and
+						     dom(A1) == cod(A) .
+
+eq	< proj1(P) , proj2(P) >  =  id(P) .
+      
+      
+
+endfm
+

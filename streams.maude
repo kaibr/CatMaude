@@ -1,0 +1,61 @@
+  
+	
+--- This is T(X) = A x X .	
+	
+	
+fmod STREAM-FUNCTOR is
+
+  including PRODUCT-ASSOC . 
+  including PARAMETER .
+  
+  var A : Object .
+  var F : Arrow .
+
+  op  strfunc : Object -> Object .
+  op  strfunc : Arrow -> Arrow .
+    
+  eq	strfunc( F ) = id(setA) x F .
+  eq	strfunc( A ) = setA x A .
+    
+endfm
+	
+
+--- The set of infinite streams		
+	
+	
+fmod STREAMS is
+
+  including STREAM-FUNCTOR .
+
+
+  ops head tail : -> Arrow .
+  ops merge odd even : -> Arrow .
+  op  streams : -> Object .
+  
+  eq dom(head) = streams .
+  eq cod(head) = setA .
+  eq dom(tail) = streams .
+  eq cod(tail) = streams .
+  
+  eq dom(merge) = streams x streams .
+  eq cod(merge) = streams . 
+  eq dom(odd) = streams .
+  eq cod(odd) = streams . 
+  eq dom(even) = streams .
+  eq cod(even) = streams . 
+  
+  
+  eq  merge ; head  =  proj1(streams, streams) ; head .
+  eq  merge ; tail  =  < proj2(streams, streams) , proj1(streams, streams) ; tail > ; merge .
+  
+  eq  odd ; head  =  head .
+  eq  odd ; tail  =  tail ; tail ; odd .
+  
+***  eq  even  =  tail ; odd .
+
+  eq  even ; head  =  tail ; head .
+  eq  even ; tail  =  tail ; tail ; even .
+  
+endfm
+ 
+

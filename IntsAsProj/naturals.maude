@@ -1,0 +1,222 @@
+
+	
+in category.maude
+in arrowlist.maude
+in endofunctor.maude
+in sum.maude
+in product.maude
+
+
+  
+	
+--- This is T(X) = 1 + X .	
+	
+	
+fmod NATURALS-FUNCTOR is
+
+  including ENDOFUNCTOR .
+  including SUM .
+  including PRODUCT .
+  
+  var S : Object .
+  var F : Arrow .
+  
+  eq	functorT( F ) = sum( id(1) , F )  .
+  eq	functorT( S ) = 1 + S .
+    
+endfm
+	
+
+--- The *completed* naturals, i.e. N U {infinity}.
+	
+	
+fmod NATURALS is
+
+  including CATEGORY .
+  including SUM .
+  including NATURALS-FUNCTOR .
+  including PRODUCT .
+
+  vars A A1 A2 	: Arrow .
+  vars O O1 O2	: Object .
+
+
+  op  nat : -> Object .
+  op  next : -> Arrow .
+
+  eq  dom(next) = nat .
+  eq  cod(next) = functorT(nat) .  
+
+
+  --- successor
+  
+  
+  ops nextinv succ pred predstruct : -> Arrow .
+
+  eq  dom(nextinv)  =  1 + nat .
+  eq  cod(nextinv)  =  nat .
+
+  eq  nextinv ; next  =  functorT(next) ; functorT(nextinv) .
+			 
+  eq  succ  =  inc( 1, 1 + nat ) ; nextinv .
+
+  
+  --- predecessor
+  
+  
+  eq  dom(pred)  =  nat .
+  eq  cod(pred)  =  nat .
+  
+  eq  predstruct  =  next ; [ inc( 0, 1 + nat),
+			      next ; sum( id(1) , succ )
+			    ] .
+  
+  eq  pred ; next  =  predstruct ; functorT(pred) .
+
+
+    
+  --- addition
+  
+  
+  ops  addstruct add : -> Arrow .
+
+
+  eq  dom(addstruct)  =  nat x nat .
+  eq  cod(addstruct)  =  1 + (nat x nat) .
+  
+  eq  dom(add)  =  nat x nat .
+  eq  cod(add)  =  nat .
+  
+  eq  add ; next = addstruct ; functorT(add) .
+  
+  
+  
+  ceq  A ; addstruct  =  inc(0, 1 + ( nat x nat) )  
+       if  cod(A) == dom(addstruct)  and
+           A ; proj(0, nat x nat) ; next == inc(0, 1 + nat) and
+	   A ; proj(1, nat x nat) ; next == inc(0, 1 + nat) .
+	   
+  ceq  A ; addstruct  =  A ; product(id(nat), pred) ; inc(1, 1 + ( nat x nat) )  
+       if  cod(A) == dom(addstruct)  and
+           A ; proj(0, nat x nat) ; next == inc(0, 1 + nat) and
+	   not A ; proj(1, nat x nat) ; next == inc(0, 1 + nat) .
+	   
+  ceq  A ; addstruct  =  A ; product(pred, id(nat)) ; inc(1, 1 + ( nat x nat) )  
+       if  cod(A) == dom(addstruct)  and
+           not A ; proj(0, nat x nat) ; next == inc(0, 1 + nat) .
+
+
+
+	   
+	   
+  --- zero	   	
+	   
+  ops  zero zerostruct : -> Arrow .
+  
+
+  eq  zerostruct  =  inc(0, 1 + 1) .
+  
+  eq  dom(zero)  =  1 .
+  eq  cod(zero)  = nat .
+
+  eq  zero ; next  =  zerostruct ; functorT(zero) .
+
+  --- enriching by lemmas that follow from uniqueness:
+  
+  eq  zero ; pred = zero .
+  eq  next ; nextinv = id(nat) .    
+
+
+endfm
+
+
+***--- to prove
+***
+***--- pred(succ(x)) = x 
+***--- thus to prove: pred ; succ is a endomorphism on the final coalg.
+***--- and thus equal to id(nat)
+***
+***
+***---reduce succ ; pred ; next == next ; functorT( succ ; pred ) .
+***
+***reduce succ ; pred ; next .
+***
+***reduce next ; functorT( succ ; pred ) .
+***
+***--- The two resulting terms above only differ in a "next ; nextinv"
+***--- occuring in the first. This can disappear since
+***--- "next ; nextinv" is an endomorphism on the final coalg.
+***--- and thus equal to id .
+***
+***reduce next ; nextinv ; next == next ; functorT(next ; nextinv) .
+***
+***
+***reduce next ; nextinv ; next .
+***reduce next ; functorT(next ; nextinv) .
+***
+
+
+***
+***--- add(zero,zero) = zero
+***
+***reduce < zero,zero > ; add ; next == zerostruct ; functorT(< zero,zero > ; add) .
+***
+***
+***
+***--- add(zero,x)=x    This still needs work!
+***
+***reduce  < !1(nat) ; zero , id(nat) >  ; add ; next .
+***
+***reduce  next ; functorT(< !1(nat) ; zero , id(nat) > ; add) .
+***
+
+---  add(s(x),y) = s(add(x,y))
+
+reduce  product(id(nat), succ) ; add ; next .
+reduce  add ; succ ; next .
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+*** The following is NOT advisable, since (1) NF's become much more cluttered
+*** and (2) when enriching, more equations have to be added for confluence
+***
+***  op  corec-nat : Arrow -> Arrow? .
+***  
+***  cmb  corec-nat(A) : Arrow  if  cod(A) == functorT(dom(A)) .
+***  
+***  eq  dom(corec-nat(A))  =  dom(A) .
+***  eq  cod(corec-nat(A))  =  nat .
+***  
+***  
+***  ceq  corec-nat(A) ; next  =  A ; functorT(corec-nat(A))
+***       if cod(A) == functorT(dom(A)) . 
+
+
+
+
+
+***  The following (final object) is not terminating:
+***  
+***  op  !from : Object -> Arrow .
+***  
+***  eq  dom(!from(O)) = O .
+***  eq  cod(!from(O)) = 1 .
+***  
+***  ceq  A  =  !from(dom(A))  if  cod(A) == 1  and  not A == !from(dom(A)) .
+  

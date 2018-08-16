@@ -1,0 +1,33 @@
+
+
+fmod CATEGORY is
+
+  sorts   Object Arrow Arrow? .
+
+  subsorts   Arrow < Arrow? .
+
+  op id           :  Object -> Arrow .
+  ops dom cod	  :  Arrow -> Object  .
+  op _;_	  :  Arrow? Arrow? -> Arrow? [ assoc ] .
+
+
+  vars F G 	  :  Arrow .
+  vars A 	  :  Object .
+
+
+  cmb 	F ; G	  : Arrow	if	cod(F) == dom(G) .
+
+
+  ceq	id(A) ; F = F		if	dom(F) == A .
+  ceq	F ; id(A) = F		if 	cod(F) == A .
+
+  eq	dom( F ; G ) = dom(F) .
+  eq	cod( F ; G ) = cod(G) .
+
+  eq	dom(id(A)) = A .
+  eq	cod(id(A)) = A .
+
+endfm
+
+
+

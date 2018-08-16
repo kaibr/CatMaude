@@ -1,0 +1,101 @@
+
+
+fmod DISTRIBUTIVE is
+
+  including CATEGORY .
+  including PRODUCT-ASSOC .
+  including SUM .
+  
+   
+  op  dist : Object Object Object -> Arrow .
+
+  vars  A B C D	 : Object .
+  vars  F G	 : Arrow .
+
+	
+  eq  dom( dist(A,B,C) )  =  A x (B + C) .
+  eq  cod( dist(A,B,C) )  =  (A x B) + (A x C) .
+
+  
+  eq  dist(A,B,C) ;
+      [ < proj1(A,B), proj2(A,B) ; inc1(B,C) > , 
+	< proj1(A,C), proj2(A,C) ; inc2(B,C) > ]  
+	=  id(A x (B + C)) .
+
+  ceq  dist(A,B,C) ;  
+      [ < proj1(A,B), proj2(A,B) ; inc1(B,C) > ; F , 
+	< proj1(A,C), proj2(A,C) ; inc2(B,C) > ; F ]
+      =  F  if  dom(F) == A x (B + C) .
+		
+  
+  eq  < proj1(A,B), proj2(A,B) ; inc1(B,C) > ; dist(A,B,C)
+      =  inc1(A x B, A x C) .
+      
+  eq  < proj1(A,C), proj2(A,C) ; inc2(B,C) > ; dist(A,B,C)
+      =  inc2(A x B, A x C) .
+
+  
+  ceq  < F, G ; inc1(B,C) > ; dist(A,B,C)
+       =  < F,G > ; inc1(A x B, A x C) 
+       if  dom(F) == dom(G)  and
+	   cod(F) == A  and
+	   cod(G) == B .
+      
+  ceq  < F, G ; inc2(B,C) > ; dist(A,B,C)
+       =  < F,G > ; inc2(A x B, A x C) 
+       if  dom(F) == dom(G)  and
+	   cod(F) == A  and
+	   cod(G) == C .
+	   
+	   
+  ceq  < F, inc1(B,C) > ; dist(A,B,C)
+       =  < F,id(B) > ; inc1(A x B, A x C) 
+       if  dom(F) == B  and
+	   cod(F) == A .
+      
+  ceq  < F, inc2(B,C) > ; dist(A,B,C)
+       =  < F,id(C) > ; inc2(A x B, A x C) 
+       if  dom(F) == B  and
+	   cod(F) == A .
+
+      
+--- CP!  
+  ceq  < proj1(A, B + C) ; F, proj2(A, B + C) > ; dist(D,B,C)
+      =  dist(A,B,C) ; ( ( F x id(B) ) + ( F x id(C) ) )
+      if  dom(F) == A  and
+	  cod(F) == D .
+	  
+
+  ceq  < F,G > ; dist(A,B,C)
+      =  < id(dom(F)), G > ; dist(dom(F),B,C) ; 
+	 ( ( F x id(B) ) + ( F x id(C) ) )
+      if  dom(F) == dom(G)  and
+	  cod(F) == A  and
+	  cod(G) == B + C and
+	  --- Termination
+	  not isId(F) . 
+
+  op   isId : Arrow -> Bool .	  	  
+  eq   isId(id(A)) = true .   	  
+                       
+endfm
+
+
+
+
+*** The distributivity isomorphism:
+***
+***  eq  distribute(A,B,C) ;
+***      [ < proj1(A x B) , proj2(A x B) ; inc1(B + C) > , 
+***	< proj1(A x C) , proj2(A x C) ; inc2(B + C) > ]  
+***	=  id(A x (B + C)) .
+***	
+***  eq  [ < proj1(A x B) , proj2(A x B) ; inc1(B + C) > , 
+***	< proj1(A x C) , proj2(A x C) ; inc2(B + C) > ]  ;
+***      distribute(A,B,C)
+***        =  id((A x B) + (A x C)) .
+
+ 
+ 
+
+

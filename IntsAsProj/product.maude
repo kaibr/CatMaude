@@ -1,0 +1,210 @@
+
+
+	
+fmod PRODUCT is
+
+including MACHINE-INT .
+including ARROW-LIST .
+including CATEGORY .
+
+sorts	  Product .
+subsorts  Product < Object .
+
+op _x_ 		: Object Object -> Product [assoc] .
+ops proj 	: MachineInt Product -> Arrow? .
+
+var NzI		   : NzMachineInt .
+var I J		   : MachineInt .
+vars A A1 A2 A3 A4 : Arrow .
+vars AL	AL1 AL2    : ArrowList .
+vars O O1 O2	   : Object .
+var P		   : Product .
+
+
+
+eq  dom( proj( I, P ) ) = P .
+eq  cod( proj( I, P ) ) = extractObjP(I,P) .
+
+
+eq  dom( < A, AL > ) = dom(A) .
+eq  cod( < A > )  =  cod(A) .
+eq  cod( < A, AL > ) = cod(A) x cod(< AL >) .
+
+
+--- express product as pairing
+
+eq  product(AL) = < constructPairing(AL, 0, domP(AL)) > .
+
+
+
+cmb	< AL > : Arrow	if	equalDomains(AL) .
+
+cmb	proj( I, P ) : Arrow	if	I >= 0 and lengthP(P) > I .
+
+
+--- existence of pairing 
+
+ceq 	< AL > ; proj(I,P) 
+	= 
+	projectP( I, AL, extractArrow(whichComponentP(AL,I,P), AL), whichComponentP(AL,I,P)) 
+        if  equalDomains(AL)  and 
+	    cod(< AL >) == P and
+	    proj(I,P) : Arrow .
+
+		     
+--- uniqueness of pairing (upto 4)
+
+ceq   < AL1 , (A ; proj(0,P)) , (A ; proj(1,P)) , AL2 > 
+      =
+      < AL1 , A , AL2 > 
+      if
+      cod(A) == P  and  lengthP(P) == 2 .
+      
+ceq   < AL1 , (A ; proj(0,P)) , (A ; proj(1,P)) , (A ; proj(2,P)) , AL2 > 
+      =
+      < AL1 , A , AL2 > 
+      if
+      cod(A) == P  and  lengthP(P) == 3 .
+      
+ceq   < AL1 , (A ; proj(0,P)) , (A ; proj(1,P)) , (A ; proj(2,P)) , (A ; proj(3,P)) , AL2 > 
+      =
+      < AL1 , A , AL2 > 
+      if
+      cod(A) == P  and  lengthP(P) == 4 .          
+
+
+
+
+ceq  A ; < AL >  =  < affixArrow( A , AL ) >  if  equalDomains(AL) and
+					      dom(< AL >) == cod(A) .
+
+					  
+ceq  < AL1 , proj(0,P) , proj(1,P) , AL2 >   =  id(P)  if lengthP(P) == 2 .
+ceq  < AL1 , proj(0,P) , proj(1,P) , proj(2,P) , AL2 >   =  id(P)  
+						       if lengthP(P) == 3 .
+ceq  < AL1 , proj(0,P) , proj(1,P) , proj(2,P) , proj(3,P) , AL2 >   =  id(P)  
+						       if lengthP(P) == 4 .
+
+						       
+			
+--- the "empty product"
+
+
+
+op  1 : -> Object .
+
+op  !1 : Object -> Arrow .
+
+eq  dom(!1(O)) = O .
+eq  cod(!1(O)) = 1 .
+
+
+						      
+						       
+						       
+						             
+ 
+
+ 
+ 
+--- auxiliary functions      
+
+
+op  domP : ArrowList -> Product .
+
+eq  domP( A )  =  dom(A) .
+eq  domP( A , AL ) = dom(A) x domP(AL) .
+
+
+
+op  constructPairing : ArrowList MachineInt Product -> ArrowList .
+
+eq  constructPairing( A , I , P)  =  < constructProj(I, dom(A), P) > ; A  .
+eq  constructPairing( (A , AL) , I , P) 
+       =  
+    ( < constructProj(I, dom(A), P) > ; A ) , 
+    constructPairing( AL , I + lengthP(dom(A)) , P ) .
+
+
+op  constructProj : MachineInt Object Product -> ArrowList .
+
+eq  constructProj(I, (O x O1), P)  =  ( proj(I,P) , constructProj(I + 1, O1, P)) .
+ceq constructProj(I, O, P)  =  proj(I,P)  if  not O : Product .
+
+
+
+op  extractObjP : MachineInt Object -> Object .
+
+
+ceq  extractObjP(NzI, O1 x O2)  =  extractObjP(NzI - 1, O2)  if  not O1 : Product .
+
+ceq  extractObjP(0, O1)	=  O1			   if  not O1 : Product .
+ceq  extractObjP(0, O1 x O2)  =  O1		   if  not O1 : Product .
+
+
+
+op  lengthP : Object -> MachineInt .
+
+eq  lengthP(O1 x O2)  =  lengthP(O1) + lengthP(O2) .
+
+ceq lengthP(O)	      =  1  if  not O : Product .
+
+
+
+---   I: projection  AL: Arrowlist in pairing  A: the corresponding component
+---   of the pairing   J: index of A in AL
+op  projectP : MachineInt ArrowList Arrow MachineInt -> Arrow .
+
+eq  projectP( I, AL, A, J )  =  
+    if cod(A) : Product
+    then
+       A ; if J == 0 
+	   then
+		proj(I,cod(A))
+	   else
+		proj(I - lengthP(cod(< extractFirstArrows( J - 1, AL) >)), cod(A))
+	   fi
+    else
+       A
+    fi .
+
+
+
+
+
+op  whichComponentP : ArrowList MachineInt Object -> MachineInt .
+
+ceq  whichComponentP( (A , AL), I, O1 x O2)  
+     =  
+     1 + whichComponentP(AL, I - lengthP(O1), O2)
+     if
+     cod(A) == O1  and  lengthP(O1) <= I  and I < lengthP(O1 x O2) .
+
+ceq  whichComponentP( (A , AL), I, O1 x O2)  =  0  
+     if
+     cod(A) == O1  and  lengthP(O1) > I  and  I < lengthP(O1 x O2) .
+         
+ceq  whichComponentP( A , I, O)  =  0  
+     if
+     cod(A) == O .
+
+
+     
+     
+
+			
+*** for testing 
+
+  ops a b c d : -> Object .
+  ops f g h : -> Arrow .
+
+  eq dom(f) = a .
+  eq cod(f) = b .
+  eq dom(g) = a .
+  eq cod(g) = a x c .
+
+  eq dom(h) = a .
+  eq cod(h) = c .			
+
+endfm
+

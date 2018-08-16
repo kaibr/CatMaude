@@ -1,0 +1,37 @@
+
+
+fmod CATEGORY is
+
+  sorts   Object Arrow Arrow? .
+
+  subsorts   Arrow < Arrow? .
+
+  op id           :  Object -> Arrow .
+  ops dom cod	  :  Arrow -> Object  .
+  op _;_	  :  Arrow? Arrow? -> Arrow? [ assoc prec 40 ] .
+
+
+  vars A A1 A2	  :  Arrow .
+  vars O O1 O2	  :  Object .
+
+
+  cmb 	A1 ; A2	  : Arrow	if	dom(A2) == cod(A1) .
+
+
+  ceq	id(O) ; A = A		if	dom(A) == O .
+  ceq	A ; id(O) = A		if 	cod(A) == O .
+
+  eq	dom( A1 ; A2 ) = dom(A1) .
+  eq	cod( A1 ; A2 ) = cod(A2) .
+
+  eq	dom(id(O)) = O .
+  eq	cod(id(O)) = O .
+
+endfm
+
+
+
+---  ";" should have higher precedence than ","
+
+---  equations for dom and cod don't need condition that A1 ; A2 is Arrow
+---  this is implicit in the domains of cod and dom

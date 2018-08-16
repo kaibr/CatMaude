@@ -1,0 +1,91 @@
+
+
+	
+in category.maude
+in endofunctor.maude
+in product.maude
+
+  
+	
+--- This is T(X) = A x X .	
+	
+	
+fmod STREAM-FUNCTOR is
+
+  including ENDOFUNCTOR .
+  including PRODUCT . 
+
+  op  setA : -> Object .
+  
+  var S : Object .
+  var F : Arrow .
+  
+  eq	functorT( F ) = id(setA) x F .
+  eq	functorT( S ) = setA x S .
+    
+endfm
+	
+
+--- The set of infinite streams		
+	
+	
+fmod STREAM is
+
+  including CATEGORY .
+  including PRODUCT .
+  including STREAM-FUNCTOR .
+
+
+  ops head tail : -> Arrow .
+  ops merge odd even : -> Arrow .
+  op  streams : -> Object .
+  
+  eq dom(head) = streams .
+  eq cod(head) = setA .
+  eq dom(tail) = streams .
+  eq cod(tail) = streams .
+  
+  eq dom(merge) = streams x streams .
+  eq cod(merge) = streams . 
+  eq dom(odd) = streams .
+  eq cod(odd) = streams . 
+  eq dom(even) = streams .
+  eq cod(even) = streams . 
+  
+  
+  eq  merge ; head  =  proj1(streams x streams) ; head .
+  eq  merge ; tail  =  < proj2(streams x streams) , proj1(streams x streams) ; tail > ; merge .
+  
+  eq  odd ; head  =  head .
+  eq  odd ; tail  =  tail ; tail ; odd .
+  
+  eq  even  =  tail ; odd .
+  
+endfm
+ 
+
+--- to prove: merge(odd(x),even(x)) = x
+--- < odd , even > ; merge  and id(streams) are homomorphisms
+--- from the final coalgebra into itself
+--- and thus equal
+ 
+reduce < odd,even > ; merge ; < head,tail > == < head,tail > ; functorT(< odd,even > ; merge) .
+--- It works.
+
+reduce id(streams) ; < head,tail > == < head,tail > ; functorT(id(streams)) .
+--- It works.
+
+
+--- to prove the same statement in a different way:
+--- to prove:  < odd , even > ; merge == id(streams) 
+--- thus to prove:  < odd , even > ; merge ; < head,tail > == id(streams) ; < head,tail >
+--- <head,tail> is an isomorphism and thus cancelable
+
+reduce < odd,even > ; merge ; < head,tail > == id(streams) ; < head,tail > .
+--- that does NOT work...
+--- needs uniqueness 
+
+
+ 
+reduce < odd,even > ; merge ; < head,tail > .
+reduce id(streams) ; < head,tail > .

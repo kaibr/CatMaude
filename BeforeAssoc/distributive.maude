@@ -1,0 +1,96 @@
+	
+--- This is needed to enable function definitions by case
+--- analysis on sums that are nested inside products
+--- This is *not* confluent.
+
+
+
+fmod DISTRIBUTIVE is
+
+  including CATEGORY .
+  including PRODUCT .
+  including SUM .
+  including SUMPRODUCT .
+  
+   
+  op  distribute : Object Object Object -> Arrow .
+
+  vars  O1 O2 O3	: Object .
+  vars  A A1 A2		: Arrow .
+
+
+  eq  distribute(O1,O2,O3) ;
+      [ < proj1(O1 x O2) , proj2(O1 x O2) ; inc1(O2 + O3) > , 
+	< proj1(O1 x O3) , proj2(O1 x O3) ; inc2(O2 + O3) > ]  
+	=  id(O1 x (O2 + O3)) .
+	
+  eq  [ < proj1(O1 x O2) , proj2(O1 x O2) ; inc1(O2 + O3) > , 
+	< proj1(O1 x O3) , proj2(O1 x O3) ; inc2(O2 + O3) > ]  ;
+      distribute(O1,O2,O3)
+        =  id((O1 x O2) + (O1 x O3)) .
+
+	
+  eq  dom(distribute(O1,O2,O3))  =  O1 x (O2 + O3) .
+  eq  cod(distribute(O1,O2,O3))  =  (O1 x O2) + (O1 x O3) .
+
+
+  
+  
+  eq  < proj1(O1 x O2) , proj2(O1 x O2) ; inc1(O2 + O3) > ; distribute(O1,O2,O3)
+      =  inc1((O1 x O2) + (O1 x O3)) .
+      
+  eq  < proj1(O1 x O3) , proj2(O1 x O3) ; inc2(O2 + O3) > ; distribute(O1,O2,O3)
+      =  inc2((O1 x O2) + (O1 x O3)) .
+      
+  ceq  distribute(O1,O2,O3) ;  
+      [ < proj1(O1 x O2) , proj2(O1 x O2) ; inc1(O2 + O3) > ; A , 
+	< proj1(O1 x O3) , proj2(O1 x O3) ; inc2(O2 + O3) > ; A ]
+      =  A  if  dom(A) == O1 x (O2 + O3) .
+
+                       
+
+****** a case analysis macro
+***
+***  op  switch : Arrow Arrow -> Arrow? .
+***
+***  cmb switch(A1,A2) : Arrow  if  cod(A1) == cod(A2) and
+***			       first(dom(A1)) == first(dom(A2)) .
+***
+***  eq  dom(switch(A1,A2))  =  first(dom(A1)) x (second(dom(A1)) + second(dom(A2))) .
+***  eq  cod(switch(A1,A2))  =  cod(A1) .
+***
+***  eq  switch(A1,A2)  =  distribute( first(dom(A1)),
+***				  second(dom(A1)),
+***				  second(dom(A2))) ;
+***		      [ A1 , A2 ] .
+***
+***
+****** helper functions for case analysis
+***
+***  op first : Product -> Object .
+***  eq first(O1 x O2)  =  O1 .
+***  op second : Product -> Object .
+***  eq second(O1 x O2)  =  O2 .
+
+*** for testing 
+
+  ops a b c d : -> Object .
+  ops f g h : -> Arrow .
+
+  eq dom(f) = a x b .
+  eq cod(f) = d .
+  eq dom(g) = a x c .
+  eq cod(g) = d .
+  eq dom(h) = c .
+  eq cod(h) = c .
+
+
+endfm
+
+
+
+
+ 
+ 
+
+

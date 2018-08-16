@@ -1,0 +1,45 @@
+
+in category.maude	
+	
+fmod test is
+	
+	including CATEGORY .
+	
+
+  vars A A1 A2 	: Arrow .
+  vars O O1 O2	: Object .
+	
+  ops a b c d : -> Object .
+  ops f g h : -> Arrow .
+
+  eq dom(f) = a .
+  eq cod(f) = b .
+  eq dom(g) = b .
+  eq cod(g) = c .
+
+  eq dom(h) = a .
+  eq cod(h) = c .			
+	
+
+  eq  f ; g  = h .
+	
+
+		
+  op  endswith : Arrow Arrow -> Bool .
+  op  doesNotendwith : Arrow Arrow -> Bool .
+  
+  eq  endswith( A ; A1 , A1) = true .
+  eq  endswith( A1 , A1 ) = true .
+  
+  eq  doesNotendwith( A , A1) = not (endswith( A , A1) == true) .
+
+  
+  	
+		
+endfm
+	
+	
+reduce 	endswith( f ; g , g) .
+
+reduce 	doesNotendwith( f ; g , g) .
+

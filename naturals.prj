@@ -1,0 +1,39 @@
+
+	
+in category.maude
+in endofunctor.maude
+in sum.maude
+in product-assoc.maude
+in terminal.maude
+in distributive.maude
+  
+in naturals.maude	
+
+
+--- to prove
+
+--- pred(succ(x)) = x 
+--- thus to prove: pred ; succ is a endomorphism on the final coalg.
+--- and thus equal to id(nat)
+
+
+---reduce succ ; pred ; next == next ; funcT( succ ; pred ) .
+
+reduce succ ; pred ; next .
+reduce next ; funcT( succ ; pred ) .
+
+--- The two resulting terms above only differ in a "next ; nextinv"
+--- occuring in the first. This can disappear since
+--- "next ; nextinv" is an endomorphism on the final coalg.
+--- and thus equal to id .
+
+reduce next ; nextinv ; next == next ; funcT(next ; nextinv) .
+
+
+reduce < zero, zero > ; add ; next .
+reduce zerostruct ; (id(1) + (< zero, zero > ; add)) .
+
+
+
+
+

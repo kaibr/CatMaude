@@ -1,0 +1,104 @@
+
+	
+	
+fmod PRODUCT-ASSOC is
+
+  including CATEGORY .
+
+  op _x_ 		: Object Object -> Object [assoc] .
+  op _x_		: Arrow Arrow -> Arrow .
+  ops proj1 proj2	: Object Object -> Arrow .
+  op <_,_>		: Arrow Arrow -> Arrow? [assoc] .
+
+  vars F G H 		: Arrow .
+  vars A B C 		: Object .
+
+
+
+  eq  dom( proj1(A,B) ) = A x B .
+  eq  dom( proj2(A,B) ) = A x B . 
+  eq  cod( proj1(A,B) ) = A .
+  eq  cod( proj2(A,B) ) = B .
+
+  eq  dom( < F,G > ) = dom(F) .
+  eq  cod( < F,G > ) = cod(F) x cod(G) .
+
+
+--- express product as pairing
+
+  eq  F x G = < proj1( dom(F), dom(G) ) ; F , 
+		proj2( dom(F), dom(G) ) ; G > .
+
+
+--- pairing is defined for arrows w/ the same domain only
+
+  cmb	< F,G > : Arrow		    if	dom(F) == dom(G) .
+
+--- existence of pairing 
+
+  ceq 	< F,G > ; proj1(A,B) = F   if  dom(F) == dom(G) and 
+				       cod(F) == A and
+				       cod(G) == B .
+
+  ceq 	< F,G > ; proj2(A,B) = G   if  dom(F) == dom(G) and 
+				       cod(F) == A and
+				       cod(G) == B .
+
+--- uniqueness of pairing 
+
+  ceq   < F ; proj1(A,B), F ; proj2(A,B) > = F  if  cod(F) == A x B .
+
+
+--- and this has to be added to make it confluent
+
+  ceq	F ; < G,H >  =  < F ; G, F ; H >  if  dom(G) == dom(H) and
+					      dom(G) == cod(F) .
+
+  eq	< proj1(A,B), proj2(A,B) >  =  id(A x B) .
+  
+
+--- strict associativity
+
+  eq  proj1(A x B, C) ; proj1(A,B)  =  proj1(A, B x C) .
+  eq  proj2(A, B x C) ; proj2(B,C)  =  proj2(A x B, C) .
+  
+  eq  < proj1(A x B, C) ; proj2(A,B), proj2(A x B, C) >  =  proj2(A, B x C) .
+  eq  < proj1(A, B x C), proj2(A, B x C) ; proj1(B,C) >  =  proj1(A x B, C) .
+
+--- some critical pairs:
+
+  ceq  < F,G > ; proj1(A, B x C)  =  F ; proj1(A,B)  
+  if  dom(F) == dom(G)  and
+      cod(F) == A x B   and
+      cod(G) == C .
+  
+  ceq  < F,G > ; proj2(A x B, C)  =  G ; proj2(B,C)  
+  if  dom(F) == dom(G)  and
+      cod(F) == A       and
+      cod(G) == B x C .
+      
+  
+        
+endfm
+
+    
+
+--- Building in the Associativity Isomorphisms
+	
+--- steps: 1. not naming proj after product
+---	   2. _x_ on objects assoc
+---	   3. add assoc_iso == id
+---	   4. equivalent formulation
+---	   5. <_,_> assoc? or what?
+---
+--- here's the associativity isomorphisms
+***
+***  eq  < proj1(A x B, C) ; proj1(A, B) , 
+***        < proj1(A x B, C) ; proj2(A, B) , proj2(A x B, C) >
+***      >
+***      =  id(A x B x C) .
+***    
+***  eq  < < proj1(A, B x C) , proj2(A, B x C) ; proj1(B, C) > ,
+***        proj2(A, B x C) ; proj2(B, C)
+***      >
+***      =  id(A x B x C) .

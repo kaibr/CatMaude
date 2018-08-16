@@ -1,0 +1,61 @@
+
+fmod SUM is
+
+including CATEGORY .
+
+sorts	  Sum .
+subsorts  Sum < Object .
+
+op _+_ 		: Object Object -> Sum .
+op _+_		: Arrow Arrow -> Arrow .
+ops inc1 inc2	: Sum -> Arrow .
+op [_,_]	: Arrow Arrow -> Arrow? .
+
+vars A A1 A2 	: Arrow .
+vars O O1 O2	: Object .
+var S		: Sum .
+
+
+
+eq  cod( inc1( S ) ) = S .
+eq  cod( inc2( S ) ) = S . 
+eq  dom( inc1( O1 + O2 ) ) = O1 .
+eq  dom( inc2( O1 + O2 ) ) = O2 .
+
+eq  dom( [ A1 , A2 ] ) = dom(A1) + dom(A2) .
+eq  cod( [ A1 , A2 ] ) = cod(A1) .
+
+
+*** express sum as copairing
+
+eq  A1 + A2 = [ A1 ; inc1(cod(A1) + cod(A2)) , 
+		A2 ; inc2(cod(A1) + cod(A2)) ] .
+
+
+*** copairing is defined for arrows w/ the same codomain only
+
+cmb	[ A1, A2 ] : Arrow	if	cod(A1) == cod(A2) .
+
+*** existence of copairing 
+
+ceq 	inc1(S) ; [ A1, A2 ] = A1  if  cod(A1) == cod(A2) and
+				       dom(A1) + dom(A2) == S .
+				       
+ceq 	inc2(S) ; [ A1, A2 ] = A2  if  cod(A1) == cod(A2) and
+				       dom(A1) + dom(A2) == S .
+				       
+*** uniqueness of copairing 
+
+ceq   [ inc1(S) ; A , inc2(S) ; A ] = A  if  dom(A) == S .
+
+
+*** and this has to be added to make it confluent
+
+ceq  [ A1 , A2 ] ; A  =  [ A1 ; A , A2 ; A ]  if  cod(A1) == cod(A2) and
+						  cod(A1) == dom(A) .
+						  
+
+eq  [ inc1(S) , inc2(S) ]  =  id(S) .
+
+
+endfm

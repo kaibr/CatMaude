@@ -1,0 +1,61 @@
+
+	
+	
+fmod PRODUCT is
+
+  including CATEGORY .
+
+  op _x_ 		: Object Object -> Object .
+  op _x_		: Arrow Arrow -> Arrow .
+  ops proj1 proj2	: Object Object -> Arrow .
+  op <_,_>		: Arrow Arrow -> Arrow? .
+
+  vars F G H 		: Arrow .
+  vars A B 		: Object .
+
+
+
+  eq  dom( proj1(A,B) ) = A x B .
+  eq  dom( proj2(A,B) ) = A x B . 
+  eq  cod( proj1(A,B) ) = A .
+  eq  cod( proj2(A,B) ) = B .
+
+  eq  dom( < F,G > ) = dom(F) .
+  eq  cod( < F,G > ) = cod(F) x cod(G) .
+
+
+--- express product as pairing
+
+  eq  F x G = < proj1( dom(F), dom(G) ) ; F , 
+		proj2( dom(F), dom(G) ) ; G > .
+
+
+--- pairing is defined for arrows w/ the same domain only
+
+  cmb	< F,G > : Arrow		    if	dom(F) == dom(G) .
+
+--- existence of pairing 
+
+  ceq 	< F,G > ; proj1(A,B) = F   if  dom(F) == dom(G) and 
+				       cod(F) == A and
+				       cod(G) == B .
+
+  ceq 	< F,G > ; proj2(A,B) = G   if  dom(F) == dom(G) and 
+				       cod(F) == A and
+				       cod(G) == B .
+
+--- uniqueness of pairing 
+
+  ceq   < F ; proj1(A,B), F ; proj2(A,B) > = F  if  cod(F) == A x B .
+
+
+--- and this has to be added to make it confluent
+
+  ceq	F ; < G,H >  =  < F ; G, F ; H >  if  dom(G) == dom(H) and
+					      dom(G) == cod(F) .
+
+  eq	< proj1(A,B), proj2(A,B) >  =  id(A x B) .
+
+      
+endfm
+

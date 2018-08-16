@@ -1,0 +1,88 @@
+
+	
+in category.maude
+in endofunctor.maude
+in sum.maude
+
+
+  
+	
+--- This is T(X) = 1 + X .	
+	
+	
+fmod NATURALS-FUNCTOR is
+
+  including ENDOFUNCTOR .
+  including SUM .
+
+  op  1 : -> Object .
+  
+  var S : Object .
+  var F : Arrow .
+  
+  eq	functorT( F ) = id(1) + F  .
+  eq	functorT( S ) = 1 + S .
+    
+endfm
+	
+
+--- The *completed* naturals, i.e. N u {infinity}.
+	
+	
+fmod NATURALS is
+
+  including CATEGORY .
+  including SUM .
+  including NATURALS-FUNCTOR .
+
+  vars A A1 A2 	: Arrow .
+  vars O O1 O2	: Object .
+
+  op  next : -> Arrow .
+  ops nextinv succ pred predstruct : -> Arrow .
+  op  naturals : -> Object .
+
+  
+  eq  dom(next) = naturals .
+  eq  cod(next) = functorT(naturals) .  
+
+  eq  dom(nextinv) = functorT(naturals) .
+  eq  cod(nextinv) = naturals .
+  eq  dom(pred) = naturals .
+  eq  cod(pred) = naturals .
+
+  eq  nextinv ; next  =  functorT(next) ; functorT(nextinv) .
+			 
+  eq  succ  =  inc2( 1 + naturals ) ; nextinv .
+
+  eq  predstruct  =  next ; [ inc1(1 + naturals),
+			      next ; ( id(1) + succ )
+			    ] .
+  
+  eq  pred ; next  =  predstruct ; functorT(pred) .
+  
+endfm
+
+
+--- to prove
+
+--- pred(succ(x)) = x 
+--- thus to prove: pred ; succ is a endomorphism on the final coalg.
+--- and thus equal to id(naturals)
+
+
+---reduce succ ; pred ; next == next ; functorT( succ ; pred ) .
+
+reduce succ ; pred ; next .
+reduce next ; functorT( succ ; pred ) .
+
+--- The two resulting terms above only differ in a "next ; nextinv"
+--- occuring in the first. This can disappear since
+--- "next ; nextinv" is an endomorphism on the final coalg.
+--- and thus equal to id .
+
+reduce next ; nextinv ; next == next ; functorT(next ; nextinv) .
+
+
+
+

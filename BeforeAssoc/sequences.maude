@@ -1,0 +1,191 @@
+
+	
+in category.maude
+in endofunctor.maude
+in product.maude
+in sum.maude
+in sumproduct.maude
+in distributive.maude
+
+
+
+
+  	
+--- This is T(X) = 1 + A x X .	
+	
+	
+fmod SEQUENCE-FUNCTOR is
+
+  including ENDOFUNCTOR .
+  including PRODUCT . 
+  including SUM .
+
+  op  setA : -> Object .
+  op  1 : -> Object .
+  
+  var S : Object .
+  var F : Arrow .
+  
+  eq	functorT( F ) = id(1) + ( id(setA) x F ) .
+  eq	functorT( S ) = 1 + ( setA x S ) .
+    
+endfm
+	
+
+--- The set of sequences i.e. (infinite) streams and (finite) lists	
+	
+	
+fmod SEQUENCES is
+
+  including SEQUENCE-FUNCTOR .
+  including DISTRIBUTIVE .
+
+  vars A A1 A2 	: Arrow .
+  vars O O1 O2	: Object .
+
+  op  next : -> Arrow .
+  op  seq : -> Object .
+
+  ops nextinv tail cons : -> Arrow .
+  ops proj2struct tailstruct : -> Arrow .  
+  
+  eq  dom(next)  =  seq .
+  eq  cod(next)  =  functorT(seq) .
+
+  eq  dom(nextinv)  =  functorT(seq) .
+  eq  cod(nextinv)  =  seq .
+  eq  dom(tail)  =  seq .
+  eq  cod(tail)  =  seq .
+  eq  dom(cons)  =  setA x seq .
+  eq  cod(cons)  =  seq .
+
+
+  eq  nextinv ; next  =  functorT(next) ; functorT(nextinv) .
+    
+  eq  cons  =  inc2(functorT(seq)) ; nextinv .
+  
+  eq  tail ; next = tailstruct ; functorT(tail) .
+  
+  eq  tailstruct  =  next ; [ 
+			      inc1(functorT(seq)) ,
+
+			      proj2(setA x seq) ; next ; 
+			      (id(1) + < proj1(setA x seq) , cons >)
+			    ] .
+			
+
+--- this is the structure of the coalgebra who's unique hom
+--- is proj2(setA x seq)
+
+
+  eq proj2struct  =  proj2(setA x seq) ; next ; 
+		      [ inc1(functorT(setA x seq)) ,
+		        < proj1(setA x seq) , id(setA x seq) > ;
+			inc2(functorT(setA x seq)) ] .
+    
+
+--- Let's enrich the theory by equations that follow from uniqueness:
+
+  eq  next ; nextinv  =  id(seq) .
+    
+--- end of enrichment
+    
+
+        
+    
+  ops nil nilstruct : -> Arrow .
+  
+  eq  dom(nil)  =  1 .
+  eq  cod(nil)  =  seq .
+  
+  eq  nilstruct  =  inc1(functorT(1)) .
+  
+  eq  nil ; next  =  nilstruct ; functorT(nil) .
+
+--- helper functions for conc :
+
+--- associativity isomorphisms
+
+  op  assocRight : -> Arrow .
+  eq  assocRight  =  < proj1((setA x seq) x seq) ;
+		       proj1(setA x seq) 
+		       ,
+		       proj2(setA x seq) x
+		       id(seq)
+		     > .
+		     
+
+
+		     			
+      
+  ops conc concstruct : -> Arrow .
+
+  eq  dom(conc)  =  seq x seq .
+  eq  cod(conc)  =  seq .
+  
+  eq  concstruct  =  < id(seq x seq) , 
+		       proj1(seq x seq) ; next 
+		     > ;
+		     distribute(seq x seq, 1, setA x seq) ;
+		     [
+		       proj1((seq x seq) x 1) ;
+		       ( id(seq) x next ) ;
+		       distribute(seq, 1, setA x seq);
+		       [
+			 proj2(seq x 1) ;
+			 inc1(1 + (setA x (seq x seq)))
+			 ,
+			 < proj2(seq x (setA x seq)) , 
+			   proj1(seq x (setA x seq)) > ;
+			 assocRight ;
+			 inc2(1 + (setA x (seq x seq)))
+		       ]
+	  	       ,
+		       ( proj2(seq x seq) x id(setA x seq) ) ;
+		       < proj2(seq x (setA x seq)) , 
+			 proj1(seq x (setA x seq)) > ;
+		       assocRight ;
+		       inc2(1 + (setA x (seq x seq)))
+		     ] .
+			   
+  eq  conc ; next  =  concstruct ; functorT(conc) .
+   
+endfm
+
+***
+*** 
+***--- to prove:  tail(cons(a,x)) = x
+***--- cons ; tail and proj2(setA x seq) are homomorphisms
+***--- from the same coalgebra into the final one
+***
+***
+***
+***reduce  proj2(setA x seq) ; next  ==  proj2struct ; functorT(proj2(setA x seq)) .
+***--- (That works, since I designed proj2struct to make it work.)
+***
+***
+***
+***
+***reduce  cons ; tail ; next  ==  proj2struct ; functorT(cons ; tail) .
+***--- works, if you enrich the theory by  "next ; nextinv = id(seq)"
+***
+***
+***--- and you may do that since:
+***reduce  next ; nextinv ; next == next ; functorT(next ; nextinv) .
+
+
+
+--- conc(nil,nil) = nil since both of them are the unique hom 
+--- from nilstruct onto next
+
+---reduce  < nil , nil > ; conc ; next == nilstruct ; functorT(< nil , nil > ; conc) .
+
+reduce  < nil , nil > ; conc ; next .
+reduce  nilstruct ; functorT(< nil , nil > ; conc) .
+
+
+
+
+
+
+
